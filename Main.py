@@ -49,3 +49,26 @@ logger = Logger()
 logger.info("Sistema iniciado.")
 logger.warning("Memória quase cheia.")
 logger.error("Falha ao carregar módulo.")
+
+
+from InputMenager import InputManager
+
+input_manager = InputManager()
+
+texto = input_manager.get_input()
+
+print(texto)
+
+
+
+from ComandProcessor import CommandProcessor
+
+
+input_manager = InputManager()
+processor = CommandProcessor()
+
+texto = input_manager.get_input()
+
+tipo = processor.process(texto)
+
+print(tipo)
