@@ -2,6 +2,9 @@ from Config import Config
 from Logger import Logger
 from Memoria import Memory
 from Module_Menager import ModuleManager
+from InputMenager import InputManager
+from ComandProcessor import CommandProcessor
+from Brain import Brain
 
 
 class Core:
@@ -15,6 +18,9 @@ class Core:
         self.manager.register("config", Config())
         self.manager.register("logger", Logger())
         self.manager.register("memory", Memory())
+        self.manager.register("input", InputManager())
+        self.manager.register("processor", CommandProcessor())
+        self.manager.register("brain", Brain())
 
         # Estado da IA
         self.running = False
@@ -43,13 +49,45 @@ class Core:
 
         logger.info("Sistema iniciado.")
 
+    def run(self):
+
+        logger = self.manager.get("logger")
+        input_manager = self.manager.get("input")
+        processor = self.manager.get("processor")
+        brain = self.manager.get("brain")
+
+        logger.info("Aguardando comandos...")
+
+        while self.running:
+
+            texto = input_manager.get_input()
+
+            resultado = processor.process(texto)
+
+            if resultado["type"] == "command":
+
+                comando = resultado["content"]
+
+                if comando == "sair":
+
+                    logger.info("Encerrando sistema...")
+                    self.running = False
+
+                else:
+
+                    logger.warning(f"Comando desconhecido: {comando}")
+
+            elif resultado["type"] == "message":
+
+                resposta = brain.think(resultado["content"])
+
+                print(resposta)
+
     def stop(self):
 
-        # Obtém os módulos
         logger = self.manager.get("logger")
         memory = self.manager.get("memory")
 
-        # Encerra os módulos
         memory.stop()
         logger.info("Sistema encerrado.")
 

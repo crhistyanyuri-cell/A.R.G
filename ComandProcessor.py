@@ -9,9 +9,13 @@ class CommandProcessor:
         self.last_command = text
 
         if text.startswith("/"):
-            return "command"
+
+            return {
+                "type": "command",
+                "content": text[1:].lower()
+            }
 
         return {
-    "type": "message",
-    "content": text
-}
+            "type": "message",
+            "content": text
+        }
