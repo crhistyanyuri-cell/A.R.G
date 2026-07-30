@@ -1,6 +1,3 @@
-from typing import Self
-
-
 class ContextManager:
 
     def __init__(self):
@@ -13,11 +10,22 @@ class ContextManager:
             "user_name": None
 
         }
+
     def set(self, key, value):
 
         self.context[key] = value
 
+    def get(self, key):
 
-def get(self, key):
+        return self.context.get(key)
 
-    return self.context.get(key)    
+    def clear(self):
+
+        self.context = {
+
+    "message": None,
+    "original_message": None,
+    "last_response": None,
+    "current_handler": None
+
+}

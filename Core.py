@@ -1,3 +1,5 @@
+from typing import Self
+
 from Config import Config
 from Logger import Logger
 from Memoria import Memory
@@ -104,3 +106,12 @@ class Core:
         print("=" * 40)
         print("Sistema encerrado.")
         print("=" * 40)
+
+    def set(self, key, value):
+
+        self.context[key] = value
+
+
+def get(self, key):
+
+    return self.context.get(key)    
