@@ -4,8 +4,8 @@ class Config:
 
         self.config = {
 
-            "name": "A.R.G.",
-            "version": "0.1.0",
+            "name": "A.R.G",
+            "version": "0.1.1",
             "language": "pt-BR"
 
         }

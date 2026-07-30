@@ -25,6 +25,7 @@ class Core:
         # Estado da IA
         self.running = False
 
+
     def start(self):
 
         self.running = True
@@ -48,6 +49,7 @@ class Core:
         print("=" * 40)
 
         logger.info("Sistema iniciado.")
+
 
     def run(self):
 
@@ -77,11 +79,16 @@ class Core:
 
                     logger.warning(f"Comando desconhecido: {comando}")
 
+
             elif resultado["type"] == "message":
 
-                resposta = brain.think(resultado["content"])
+                resposta = brain.think(
+                    resultado["content"],
+                    self.manager
+                )
 
                 print(resposta)
+
 
     def stop(self):
 
@@ -89,6 +96,7 @@ class Core:
         memory = self.manager.get("memory")
 
         memory.stop()
+
         logger.info("Sistema encerrado.")
 
         self.running = False
