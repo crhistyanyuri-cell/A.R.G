@@ -22,10 +22,10 @@ class Brain:
 
     def think(self, message, manager):
 
-        # Mensagem original (preserva maiúsculas)
+        context = manager.get("context")
+
         original_message = message.strip()
 
-        # Mensagem normalizada para interpretação
         processed_message = (
             original_message
             .lower()
@@ -35,7 +35,9 @@ class Brain:
             .strip()
         )
 
-        # Passa por todos os handlers
+        context.set("original_message", original_message)
+        context.set("message", processed_message)
+
         for handler in self.handlers:
 
             resposta = handler.process(
@@ -47,6 +49,8 @@ class Brain:
             if resposta is not None:
 
                 self.last_thought = resposta
+
+                context.set("last_response", resposta)
 
                 return resposta
 

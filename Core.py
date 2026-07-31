@@ -1,13 +1,13 @@
-from typing import Self
+
 
 from Config import Config
 from Logger import Logger
 from Memoria import Memory
+from ContextManager import ContextManager
 from Module_Menager import ModuleManager
 from InputMenager import InputManager
 from ComandProcessor import CommandProcessor
 from Brain import Brain
-
 
 class Core:
 
@@ -20,10 +20,10 @@ class Core:
         self.manager.register("config", Config())
         self.manager.register("logger", Logger())
         self.manager.register("memory", Memory())
+        self.manager.register("context", ContextManager())
         self.manager.register("input", InputManager())
         self.manager.register("processor", CommandProcessor())
         self.manager.register("brain", Brain())
-
         # Estado da IA
         self.running = False
 
