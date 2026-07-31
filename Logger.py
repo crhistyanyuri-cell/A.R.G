@@ -5,9 +5,14 @@ class Logger:
         self.config = config
 
 
+    def is_debug(self):
+
+        return self.config.get("debug")
+
+
     def debug(self, message):
 
-        if self.config.get("debug"):
+        if self.is_debug():
 
             print(f"[DEBUG] {message}")
 

@@ -1,5 +1,7 @@
 import string
 
+from Intent.IntentDetector import IntentDetector
+
 from Handlers.GreetingHandler import GreetingHandler
 from Handlers.IdentityHandler import IdentityHandler
 from Handlers.MemoryHandler import MemoryHandler
@@ -12,6 +14,10 @@ class Brain:
 
         self.last_thought = None
 
+        # Detector de intenções
+        self.intent_detector = IntentDetector()
+
+        # Handlers registrados
         self.handlers = [
             GreetingHandler(),
             IdentityHandler(),
@@ -22,11 +28,13 @@ class Brain:
 
     def think(self, message, manager):
 
+        logger = manager.get("logger")
         context = manager.get("context")
-        config = manager.get("config")
 
+        # Mensagem original
         original_message = message.strip()
 
+        # Mensagem normalizada
         processed_message = (
             original_message
             .lower()
@@ -36,9 +44,13 @@ class Brain:
             .strip()
         )
 
+        # Detecta a intenção
+        intent = self.intent_detector.detect(processed_message)
+
         # Atualiza o contexto
         context.set("original_message", original_message)
         context.set("message", processed_message)
+        context.set("intent", intent)
 
         # Percorre todos os handlers
         for handler in self.handlers:
@@ -58,25 +70,41 @@ class Brain:
                     handler.__class__.__name__
                 )
 
-                # Debug
-                if config.get("debug"):
-                    self._debug_context(context)
+                self._debug_context(
+                    context,
+                    logger
+                )
 
                 return resposta
 
-        # Caso nenhum handler responda
-        if config.get("debug"):
-            self._debug_context(context)
+        self.last_thought = "Ainda estou aprendendo."
 
-        return "Ainda estou aprendendo."
+        context.set(
+            "last_response",
+            self.last_thought
+        )
+
+        context.set(
+            "current_handler",
+            "Nenhum"
+        )
+
+        self._debug_context(
+            context,
+            logger
+        )
+
+        return self.last_thought
 
 
-    def _debug_context(self, context):
+    def _debug_context(self, context, logger):
 
-        print("\n========== DEBUG ==========")
+        logger.debug("")
+        logger.debug("========== DEBUG ==========")
 
         for chave, valor in context.context.items():
 
-            print(f"{chave}: {valor}")
+            logger.debug(f"{chave}: {valor}")
 
-        print("===========================\n")
+        logger.debug("===========================")
+        logger.debug("")

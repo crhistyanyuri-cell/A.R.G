@@ -1,29 +1,29 @@
 from Handlers.BaseHandler import BaseHandler
+from Intent.IntentTypes import IntentTypes
 
 
 class MemoryHandler(BaseHandler):
 
-    def process(self, message, manager, original_message):
+    def process(self, context, manager):
+
+        intent = context.get("intent")
+        original_message = context.get("original_message")
 
         memory = manager.get("memory")
 
 
         # Aprender o nome do usuário
-        if message.startswith("meu nome é"):
+        if intent == IntentTypes.REMEMBER_USER_NAME:
 
-            nome = original_message[len("meu nome é"):].strip()
+            nome = original_message[10:].strip()
 
             memory.save("user_name", nome)
 
             return f"Entendido. Vou lembrar que seu nome é {nome}."
 
 
-        # Consultar o nome do usuário
-        if (
-    message == "meu nome"
-    or "qual meu nome" in message
-    or "qual o meu nome" in message
-):
+        # Informar o nome do usuário
+        if intent == IntentTypes.ASK_USER_NAME:
 
             nome = memory.load("user_name")
 
@@ -31,9 +31,7 @@ class MemoryHandler(BaseHandler):
 
                 return f"Seu nome é {nome}."
 
-            else:
-
-                return "Ainda não sei seu nome."
+            return "Ainda não sei seu nome."
 
 
         return None

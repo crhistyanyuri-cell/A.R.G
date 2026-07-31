@@ -1,20 +1,15 @@
 from Handlers.BaseHandler import BaseHandler
+from Intent.IntentTypes import IntentTypes
 
 
 class GreetingHandler(BaseHandler):
 
-    def process(self, message, manager, original_message):
+    def process(self, context, manager):
 
-        cumprimentos = [
-            "oi",
-            "olá",
-            "ola",
-            "bom dia",
-            "boa tarde",
-            "boa noite"
-        ]
+        intent = context.get("intent")
 
-        if message in cumprimentos:
+        if intent == IntentTypes.GREETING:
+
             return "Olá!"
 
         return None

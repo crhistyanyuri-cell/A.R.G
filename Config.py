@@ -4,12 +4,12 @@ class Config:
 
         self.config = {
 
-        "name": "A.R.G.",
-        "version": "0.1.1",
-        "language": "pt-BR",
-        "debug": True
+            "name": "A.R.G.",
+            "version": "0.3.0",
+            "language": "pt-BR",
+            "debug": False
 
-}
+        }
 
     def get(self, key):
 
@@ -18,4 +18,3 @@ class Config:
     def set(self, key, value):
 
         self.config[key] = value
-        self.config["debug"] = True

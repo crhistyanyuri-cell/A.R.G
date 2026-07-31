@@ -3,6 +3,10 @@ from Handlers.BaseHandler import BaseHandler
 
 class QuestionHandler(BaseHandler):
 
-    def process(self, message, manager, original_message):
+    def process(self, context, manager):
+
+        intent = context.get("intent")
+
+        # Futuramente responderá perguntas gerais
 
         return None
