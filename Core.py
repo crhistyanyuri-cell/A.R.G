@@ -1,5 +1,3 @@
-
-
 from Config import Config
 from Logger import Logger
 from Memoria import Memory
@@ -9,6 +7,7 @@ from InputMenager import InputManager
 from ComandProcessor import CommandProcessor
 from Brain import Brain
 
+
 class Core:
 
     def __init__(self):
@@ -16,37 +15,40 @@ class Core:
         # Gerenciador de módulos
         self.manager = ModuleManager()
 
-        # Registra os módulos existentes
-        self.manager.register("config", Config())
-        self.manager.register("logger", Logger())
+        # Registra todos os módulos
+        self._register_modules()
+
+        # Estado da IA
+        self.running = False
+
+
+    def _register_modules(self):
+
+        config = Config()
+
+        self.manager.register("config", config)
+        self.manager.register("logger", Logger(config))
         self.manager.register("memory", Memory())
         self.manager.register("context", ContextManager())
         self.manager.register("input", InputManager())
         self.manager.register("processor", CommandProcessor())
         self.manager.register("brain", Brain())
-        # Estado da IA
-        self.running = False
 
 
     def start(self):
 
         self.running = True
 
-        # Obtém os módulos necessários
-        config = self.manager.get("config")
         logger = self.manager.get("logger")
         memory = self.manager.get("memory")
+        config = self.manager.get("config")
 
-        # Inicia os módulos
         logger.info("Inicializando módulos...")
+
         memory.start()
 
-        # Informações da IA
-        name = config.get("name")
-        version = config.get("version")
-
         print("=" * 40)
-        print(f"{name} v{version}")
+        print(f"{config.get('name')} v{config.get('version')}")
         print("Sistema iniciado com sucesso.")
         print("=" * 40)
 
@@ -79,8 +81,9 @@ class Core:
 
                 else:
 
-                    logger.warning(f"Comando desconhecido: {comando}")
-
+                    logger.warning(
+                        f"Comando desconhecido: {comando}"
+                    )
 
             elif resultado["type"] == "message":
 
@@ -106,12 +109,3 @@ class Core:
         print("=" * 40)
         print("Sistema encerrado.")
         print("=" * 40)
-
-    def set(self, key, value):
-
-        self.context[key] = value
-
-
-def get(self, key):
-
-    return self.context.get(key)    

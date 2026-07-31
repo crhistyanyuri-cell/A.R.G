@@ -23,6 +23,7 @@ class Brain:
     def think(self, message, manager):
 
         context = manager.get("context")
+        config = manager.get("config")
 
         original_message = message.strip()
 
@@ -35,15 +36,16 @@ class Brain:
             .strip()
         )
 
+        # Atualiza o contexto
         context.set("original_message", original_message)
         context.set("message", processed_message)
 
+        # Percorre todos os handlers
         for handler in self.handlers:
 
             resposta = handler.process(
-                processed_message,
-                manager,
-                original_message
+                context,
+                manager
             )
 
             if resposta is not None:
@@ -51,7 +53,30 @@ class Brain:
                 self.last_thought = resposta
 
                 context.set("last_response", resposta)
+                context.set(
+                    "current_handler",
+                    handler.__class__.__name__
+                )
+
+                # Debug
+                if config.get("debug"):
+                    self._debug_context(context)
 
                 return resposta
 
+        # Caso nenhum handler responda
+        if config.get("debug"):
+            self._debug_context(context)
+
         return "Ainda estou aprendendo."
+
+
+    def _debug_context(self, context):
+
+        print("\n========== DEBUG ==========")
+
+        for chave, valor in context.context.items():
+
+            print(f"{chave}: {valor}")
+
+        print("===========================\n")

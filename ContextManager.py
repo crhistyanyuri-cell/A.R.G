@@ -4,12 +4,12 @@ class ContextManager:
 
         self.context = {
 
-            "message": None,
-            "original_message": None,
-            "last_response": None,
-            "user_name": None
+        "message": None,
+        "original_message": None,
+        "last_response": None,
+        "current_handler": None
 
-        }
+}
 
     def set(self, key, value):
 
