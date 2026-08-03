@@ -4,7 +4,7 @@ class Config:
 
         self.config = {
 
-            "name": "A.R.G.",
+            "name": "A.R.G",
             "version": "0.3.0",
             "language": "pt-BR",
             "debug": False
