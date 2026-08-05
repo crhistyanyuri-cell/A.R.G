@@ -3,7 +3,7 @@ from Intent.IntentTypes import IntentTypes
 
 class IntentDetector:
 
-    def detect(self, message):
+    def detect(self, message, context):
 
         # Cumprimentos
         if message in [
@@ -57,11 +57,20 @@ class IntentDetector:
         if message in [
             "meu nome",
             "qual meu nome",
-            "qual o meu nome",
-            "e o meu nome",
-            "e o meu"
+            "qual o meu nome"
         ]:
             return IntentTypes.ASK_USER_NAME
+
+
+        # Frases que dependem do contexto
+        if message in [
+            "e o meu",
+            "e o meu nome"
+        ]:
+
+            if context.get("last_topic") == "identity":
+
+                return IntentTypes.ASK_USER_NAME
 
 
         return IntentTypes.UNKNOWN

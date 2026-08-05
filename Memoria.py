@@ -6,9 +6,16 @@ class Memory:
 
     def __init__(self):
 
-        self.file = "memory.json"
+        self.folder = "Data"
+
+        self.file = os.path.join(
+            self.folder,
+            "memory.json"
+        )
 
         self.memory = {}
+
+        self.create_folder()
 
         self.load_memory()
 
@@ -23,9 +30,14 @@ class Memory:
         print("[MEMÓRIA] Módulo encerrado.")
 
 
-    def save(self, key, value):
+    def create_folder(self):
 
-        """Salva uma informação na memória."""
+        if not os.path.exists(self.folder):
+
+            os.makedirs(self.folder)
+
+
+    def save(self, key, value):
 
         self.memory[key] = value
 
@@ -34,27 +46,51 @@ class Memory:
 
     def load(self, key):
 
-        """Recupera uma informação da memória."""
-
         return self.memory.get(key)
+
+
+    def delete(self, key):
+
+        if key in self.memory:
+
+            del self.memory[key]
+
+            self.save_memory()
+
+
+    def get_all(self):
+
+        return self.memory
 
 
     def load_memory(self):
 
-        """Carrega a memória salva no arquivo."""
-
         if os.path.exists(self.file):
 
-            with open(self.file, "r", encoding="utf-8") as arquivo:
+            try:
 
-                self.memory = json.load(arquivo)
+                with open(
+                    self.file,
+                    "r",
+                    encoding="utf-8"
+                ) as arquivo:
+
+                    self.memory = json.load(
+                        arquivo
+                    )
+
+            except json.JSONDecodeError:
+
+                self.memory = {}
 
 
     def save_memory(self):
 
-        """Salva a memória no arquivo."""
-
-        with open(self.file, "w", encoding="utf-8") as arquivo:
+        with open(
+            self.file,
+            "w",
+            encoding="utf-8"
+        ) as arquivo:
 
             json.dump(
                 self.memory,
