@@ -1,17 +1,17 @@
-from Handlers.BaseHandler import BaseHandler
-
-
-class QuestionHandler(BaseHandler):
+class QuestionHandler:
 
 
     def process(self, context, manager):
 
-        intent = context.get(
-            "intent"
+
+        message = context.get(
+            "message"
         )
 
 
-        if intent != "QUESTION":
+        if not message.startswith(
+            ("o que", "quem", "como")
+        ):
 
             return None
 
@@ -19,17 +19,6 @@ class QuestionHandler(BaseHandler):
 
         knowledge = manager.get(
             "knowledge"
-        )
-
-
-        if knowledge is None:
-
-            return None
-
-
-
-        message = context.get(
-            "message"
         )
 
 

@@ -5,6 +5,8 @@ class IntentTypes:
     # ==========================
 
     UNKNOWN = "UNKNOWN"
+    QUESTION = "QUESTION"
+
 
 
     # ==========================
@@ -12,6 +14,7 @@ class IntentTypes:
     # ==========================
 
     GREETING = "GREETING"
+
 
 
     # ==========================
@@ -23,12 +26,14 @@ class IntentTypes:
     ASK_AI_LANGUAGE = "ASK_AI_LANGUAGE"
 
 
+
     # ==========================
     # Memória do usuário
     # ==========================
 
     REMEMBER_USER_NAME = "REMEMBER_USER_NAME"
     ASK_USER_NAME = "ASK_USER_NAME"
+
 
 
     # ==========================

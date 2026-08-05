@@ -9,6 +9,8 @@ from ContextManager import ContextManager
 from Learning import Learning
 from LearningManager import LearningManager
 
+from Knowledge.KnowledgeBase import KnowledgeBase
+
 from HandlerManager import HandlerManager
 
 from Module_Menager import ModuleManager
@@ -21,11 +23,14 @@ from Brain import Brain
 from Core import Core
 
 
+
 class Bootstrap:
+
 
     def build(self):
 
         manager = ModuleManager()
+
 
 
         # ==========================
@@ -40,6 +45,7 @@ class Bootstrap:
         )
 
 
+
         # ==========================
         # Logger
         # ==========================
@@ -50,6 +56,7 @@ class Bootstrap:
             "logger",
             logger
         )
+
 
 
         # ==========================
@@ -74,6 +81,7 @@ class Bootstrap:
         )
 
 
+
         # ==========================
         # Contexto
         # ==========================
@@ -85,6 +93,7 @@ class Bootstrap:
             ContextManager()
 
         )
+
 
 
         # ==========================
@@ -100,63 +109,92 @@ class Bootstrap:
             learning
         )
 
+
+        learning_manager = LearningManager(
+            learning
+        )
+
+        manager.register(
+            "learning_manager",
+            learning_manager
+        )
+
+
+
+        # ==========================
+        # Conhecimento
+        # ==========================
+
+        knowledge = KnowledgeBase()
+
+
         manager.register(
 
-            "learning_manager",
+            "knowledge",
 
-            LearningManager(
-                learning
-            )
+            knowledge
 
         )
+
 
 
         # ==========================
         # Handlers
         # ==========================
 
+        handler_manager = HandlerManager()
+
         manager.register(
 
             "handler_manager",
 
-            HandlerManager()
+            handler_manager
 
         )
+
 
 
         # ==========================
         # Entrada
         # ==========================
 
+        input_manager = InputManager()
+
         manager.register(
 
             "input",
 
-            InputManager()
+            input_manager
 
         )
 
+
+        processor = CommandProcessor()
 
         manager.register(
 
             "processor",
 
-            CommandProcessor()
+            processor
 
         )
+
 
 
         # ==========================
         # Brain
         # ==========================
 
+        brain = Brain()
+
         manager.register(
 
             "brain",
 
-            Brain()
+            brain
 
         )
+
 
 
         return Core(manager)

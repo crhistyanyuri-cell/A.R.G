@@ -5,9 +5,9 @@ class Config:
         self.config = {
 
             "name": "A.R.G",
-            "version": "0.3.0",
+            "version": "0.3.2",
             "language": "pt-BR",
-            "debug": False
+            "debug": True
 
         }
 

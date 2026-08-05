@@ -1,6 +1,3 @@
-from typing import Self
-
-
 class Core:
 
 
@@ -122,7 +119,7 @@ class Core:
 
 
     # =====================================
-    # Comandos
+    # Processamento de comandos
     # =====================================
 
     def process_command(self, comando):
@@ -243,34 +240,35 @@ class Core:
     def stop(self):
 
         if not self.running:
+
             return
 
 
-    logger = Self.manager.get(
-        "logger"
-    )
+        logger = self.manager.get(
+            "logger"
+        )
 
 
-    logger.info(
-        "Encerrando módulos..."
-    )
+        logger.info(
+            "Encerrando módulos..."
+        )
 
 
-    Self.manager.stop_all()
+        self.manager.stop_all()
 
 
-    Self.running = False
+        self.running = False
 
 
-    logger.info(
-        "Sistema encerrado."
-    )
+        logger.info(
+            "Sistema encerrado."
+        )
 
 
-    print("=" * 40)
+        print("=" * 40)
 
-    print(
-        "Sistema encerrado."
-    )
+        print(
+            "Sistema encerrado."
+        )
 
-    print("=" * 40)
+        print("=" * 40)

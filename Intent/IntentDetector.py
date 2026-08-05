@@ -16,6 +16,7 @@ class IntentDetector:
         "boa noite"
     }
 
+
     AI_NAME = {
         "seu nome",
         "qual seu nome",
@@ -26,6 +27,7 @@ class IntentDetector:
         "quem e voce"
     }
 
+
     AI_VERSION = {
         "sua versão",
         "sua versao",
@@ -33,16 +35,20 @@ class IntentDetector:
         "qual sua versao"
     }
 
+
     AI_LANGUAGE = {
         "seu idioma",
         "qual seu idioma"
     }
+
 
     USER_NAME = {
         "meu nome",
         "qual meu nome",
         "qual o meu nome"
     }
+
+
 
     # ==========================
     # Padrões
@@ -55,10 +61,13 @@ class IntentDetector:
         # Futuramente:
         # "minha idade é": IntentTypes.REMEMBER_USER_AGE,
         # "eu moro em": IntentTypes.REMEMBER_USER_CITY,
+
     }
 
 
+
     def detect(self, message, context):
+
 
         # ==========================
         # Cumprimentos
@@ -67,6 +76,7 @@ class IntentDetector:
         if message in self.GREETINGS:
 
             return IntentTypes.GREETING
+
 
 
         # ==========================
@@ -78,6 +88,7 @@ class IntentDetector:
             return IntentTypes.ASK_AI_NAME
 
 
+
         # ==========================
         # Versão
         # ==========================
@@ -85,6 +96,7 @@ class IntentDetector:
         if message in self.AI_VERSION:
 
             return IntentTypes.ASK_AI_VERSION
+
 
 
         # ==========================
@@ -96,6 +108,7 @@ class IntentDetector:
             return IntentTypes.ASK_AI_LANGUAGE
 
 
+
         # ==========================
         # Nome do usuário
         # ==========================
@@ -103,6 +116,7 @@ class IntentDetector:
         if message in self.USER_NAME:
 
             return IntentTypes.ASK_USER_NAME
+
 
 
         # ==========================
@@ -114,6 +128,7 @@ class IntentDetector:
             if message.startswith(pattern):
 
                 return intent
+
 
 
         # ==========================
@@ -130,6 +145,27 @@ class IntentDetector:
             if context.get("last_topic") == "identity":
 
                 return IntentTypes.ASK_USER_NAME
+
+
+
+        # ==========================
+        # Perguntas gerais
+        # ==========================
+
+        if message.startswith(
+            (
+                "o que",
+                "quem",
+                "como",
+                "onde",
+                "quando",
+                "por que",
+                "porque"
+            )
+        ):
+
+            return IntentTypes.QUESTION
+
 
 
         # ==========================

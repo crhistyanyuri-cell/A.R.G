@@ -3,6 +3,7 @@ from Handlers.BaseHandler import BaseHandler
 from Intent.IntentTypes import IntentTypes
 
 
+
 class MemoryHandler(BaseHandler):
 
 
@@ -14,8 +15,13 @@ class MemoryHandler(BaseHandler):
             "original_message"
         )
 
+
         memory_manager = manager.get(
             "memory_manager"
+        )
+
+        learning = manager.get(
+            "learning"
         )
 
 
@@ -27,8 +33,10 @@ class MemoryHandler(BaseHandler):
 
             return self._remember_user_name(
                 original_message,
-                memory_manager
+                memory_manager,
+                learning
             )
+
 
 
         # ==========================
@@ -37,15 +45,18 @@ class MemoryHandler(BaseHandler):
 
         if intent == IntentTypes.ASK_USER_NAME:
 
+
             nome = (
                 memory_manager.get_user_name()
             )
+
 
             if nome:
 
                 return (
                     f"Seu nome é {nome}."
                 )
+
 
             return (
                 "Ainda não sei seu nome."
@@ -55,6 +66,7 @@ class MemoryHandler(BaseHandler):
         return None
 
 
+
     # ==========================
     # Métodos privados
     # ==========================
@@ -62,12 +74,15 @@ class MemoryHandler(BaseHandler):
     def _remember_user_name(
         self,
         message,
-        memory_manager
+        memory_manager,
+        learning
     ):
+
 
         nome = self.extract_name(
             message
         )
+
 
         if not nome:
 
@@ -77,14 +92,25 @@ class MemoryHandler(BaseHandler):
             )
 
 
+
         nome_antigo = (
             memory_manager.get_user_name()
         )
 
 
-        memory_manager.set_user_name(
-            nome
-        )
+
+        if learning:
+
+            learning.remember_name(
+                nome
+            )
+
+        else:
+
+            memory_manager.set_user_name(
+                nome
+            )
+
 
 
         if (
@@ -108,6 +134,7 @@ class MemoryHandler(BaseHandler):
             )
 
 
+
         return (
 
             f"Entendido. "
@@ -119,7 +146,9 @@ class MemoryHandler(BaseHandler):
         )
 
 
+
     def extract_name(self, message):
+
 
         prefixes = {
 
@@ -132,10 +161,13 @@ class MemoryHandler(BaseHandler):
         }
 
 
+
         texto = message.lower()
 
 
+
         for prefix in prefixes:
+
 
             if texto.startswith(prefix):
 
@@ -146,6 +178,7 @@ class MemoryHandler(BaseHandler):
                     ].strip()
 
                 )
+
 
 
         return None

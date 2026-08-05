@@ -6,24 +6,38 @@ from Handlers.QuestionHandler import QuestionHandler
 
 class HandlerManager:
 
+
     def __init__(self):
 
-        self.handlers = [
+        self.handlers = []
 
-            GreetingHandler(),
 
-            IdentityHandler(),
+        self.register(
+            GreetingHandler()
+        )
 
-            MemoryHandler(),
+        self.register(
+            IdentityHandler()
+        )
 
+        self.register(
+            MemoryHandler()
+        )
+
+        self.register(
             QuestionHandler()
+        )
 
-        ]
 
+
+    # =====================================
+    # Processamento
+    # =====================================
 
     def process(self, context, manager):
 
         for handler in self.handlers:
+
 
             resposta = handler.process(
 
@@ -33,7 +47,9 @@ class HandlerManager:
 
             )
 
+
             if resposta is not None:
+
 
                 context.set(
 
@@ -43,15 +59,29 @@ class HandlerManager:
 
                 )
 
+
                 return resposta
+
 
         return None
 
 
+
+    # =====================================
+    # Registro
+    # =====================================
+
     def register(self, handler):
 
-        self.handlers.append(handler)
+        self.handlers.append(
+            handler
+        )
 
+
+
+    # =====================================
+    # Consulta
+    # =====================================
 
     def get_handlers(self):
 
