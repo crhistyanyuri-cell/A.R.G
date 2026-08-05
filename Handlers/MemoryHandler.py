@@ -25,6 +25,7 @@ class MemoryHandler(BaseHandler):
         )
 
 
+
         # ==========================
         # Aprender nome do usuário
         # ==========================
@@ -63,6 +64,33 @@ class MemoryHandler(BaseHandler):
             )
 
 
+
+        # ==========================
+        # Aprender preferência
+        # ==========================
+
+        if intent == IntentTypes.REMEMBER_PREFERENCE:
+
+            return self._remember_preference(
+                original_message,
+                learning
+            )
+
+
+
+        # ==========================
+        # Aprender fato
+        # ==========================
+
+        if intent == IntentTypes.REMEMBER_FACT:
+
+            return self._remember_fact(
+                original_message,
+                learning
+            )
+
+
+
         return None
 
 
@@ -70,6 +98,7 @@ class MemoryHandler(BaseHandler):
     # ==========================
     # Métodos privados
     # ==========================
+
 
     def _remember_user_name(
         self,
@@ -142,6 +171,137 @@ class MemoryHandler(BaseHandler):
             f"Vou lembrar que "
 
             f"seu nome é {nome}."
+
+        )
+
+
+
+    # ==========================
+    # Preferências
+    # ==========================
+
+    def _remember_preference(
+        self,
+        message,
+        learning
+    ):
+
+
+        if not learning:
+
+            return (
+                "O módulo de aprendizado "
+                "não está disponível."
+            )
+
+
+        texto = message.lower()
+
+
+
+        partes = texto.split(
+            "é"
+        )
+
+
+        if len(partes) < 2:
+
+            return (
+                "Não consegui identificar "
+                "essa preferência."
+            )
+
+
+
+        chave = partes[0]
+
+
+        chave = chave.replace(
+            "minha",
+            ""
+        )
+
+
+        chave = chave.replace(
+            "favorita",
+            ""
+        )
+
+
+        chave = chave.strip()
+
+
+
+        valor = partes[1].strip()
+
+
+
+        learning.learn_preference(
+            chave,
+            valor
+        )
+
+
+
+        return (
+
+            f"Entendido. "
+
+            f"Vou lembrar que sua "
+
+            f"{chave} favorita é {valor}."
+
+        )
+
+
+
+    # ==========================
+    # Fatos
+    # ==========================
+
+    def _remember_fact(
+        self,
+        message,
+        learning
+    ):
+
+
+        if not learning:
+
+            return (
+                "O módulo de aprendizado "
+                "não está disponível."
+            )
+
+
+
+        fato = message.replace(
+            "lembre que",
+            ""
+        ).strip()
+
+
+
+        if not fato:
+
+            return (
+                "Não consegui identificar "
+                "o fato."
+            )
+
+
+
+        learning.learn_fact(
+            fato
+        )
+
+
+
+        return (
+
+            "Entendido. "
+
+            "Vou guardar essa informação."
 
         )
 
