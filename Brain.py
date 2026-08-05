@@ -1,11 +1,6 @@
-from Intent.IntentDetector import IntentDetector
-
-from Handlers.GreetingHandler import GreetingHandler
-from Handlers.IdentityHandler import IdentityHandler
-from Handlers.MemoryHandler import MemoryHandler
-from Handlers.QuestionHandler import QuestionHandler
-
 import string
+
+from Intent.IntentDetector import IntentDetector
 
 
 class Brain:
@@ -14,16 +9,7 @@ class Brain:
 
         self.last_thought = None
 
-        # Detector de intenções
         self.intent_detector = IntentDetector()
-
-        # Handlers registrados
-        self.handlers = [
-            GreetingHandler(),
-            IdentityHandler(),
-            MemoryHandler(),
-            QuestionHandler()
-        ]
 
 
     def think(self, message, manager):
@@ -31,94 +17,106 @@ class Brain:
         logger = manager.get("logger")
         context = manager.get("context")
 
-        # Mensagem original
         original_message = message.strip()
 
-        # Mensagem normalizada
-        processed_message = (
+        processed_message = self._normalize(
             original_message
-            .lower()
-            .translate(
-                str.maketrans("", "", string.punctuation)
-            )
-            .strip()
         )
 
-        # Detecta a intenção usando o contexto
         intent = self.intent_detector.detect(
+
             processed_message,
+
             context
+
         )
 
-        # Atualiza a intenção
         context.update_intent(intent)
 
-        # Atualiza o contexto
-        context.set("original_message", original_message)
-        context.set("message", processed_message)
+        context.set(
+            "original_message",
+            original_message
+        )
 
-        # Percorre handlers
-        for handler in self.handlers:
+        context.set(
+            "message",
+            processed_message
+        )
 
-            resposta = handler.process(
-                context,
-                manager
+        handler_manager = manager.get(
+            "handler_manager"
+        )
+
+        resposta = handler_manager.process(
+
+            context,
+
+            manager
+
+        )
+
+        if resposta is None:
+
+            resposta = "Ainda estou aprendendo."
+
+            context.set(
+                "current_handler",
+                "Nenhum"
             )
 
-            if resposta is not None:
-
-                self.last_thought = resposta
-
-                context.set(
-                    "last_response",
-                    resposta
-                )
-
-                context.set(
-                    "current_handler",
-                    handler.__class__.__name__
-                )
-
-                # Salva no histórico
-                context.add_history(
-                    original_message,
-                    resposta,
-                    intent
-                )
-
-                self._debug_context(
-                    context,
-                    logger
-                )
-
-                return resposta
-
-
-        self.last_thought = "Ainda estou aprendendo."
+        self.last_thought = resposta
 
         context.set(
             "last_response",
-            self.last_thought
-        )
-
-        context.set(
-            "current_handler",
-            "Nenhum"
+            resposta
         )
 
         context.add_history(
+
             original_message,
-            self.last_thought,
+
+            resposta,
+
             intent
+
         )
 
         self._debug_context(
+
             context,
+
             logger
+
         )
 
-        return self.last_thought
+        return resposta
 
+
+    def _normalize(self, message):
+
+        return (
+
+            message
+
+            .lower()
+
+            .translate(
+
+                str.maketrans(
+
+                    "",
+
+                    "",
+
+                    string.punctuation
+
+                )
+
+            )
+
+            .strip()
+
+        )
 
 
     def _debug_context(self, context, logger):
@@ -142,15 +140,12 @@ class Brain:
             f"Resposta: {context.get('last_response')}"
         )
 
-
         logger.debug("")
         logger.debug("Histórico:")
 
-
-        for item in context.get("history"):
+        for item in context.get_history():
 
             logger.debug(item)
-
 
         logger.debug("===========================")
         logger.debug("")

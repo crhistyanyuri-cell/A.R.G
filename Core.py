@@ -1,296 +1,276 @@
-from Config import Config
-from Logger import Logger
-
-from Memoria import Memory
-from MemoryManager import MemoryManager
-
-from Learning import Learning
-from LearningManager import LearningManager
-
-from ContextManager import ContextManager
-
-from Module_Menager import ModuleManager
-
-from InputMenager import InputManager
-from ComandProcessor import CommandProcessor
-
-from Brain import Brain
+from typing import Self
 
 
 class Core:
 
-    def __init__(self):
 
-        # Gerenciador de módulos
-        self.manager = ModuleManager()
+    def __init__(self, manager):
 
-        # Registra todos os módulos
-        self._register_modules()
+        self.manager = manager
 
-        # Estado da IA
         self.running = False
 
 
-    def _register_modules(self):
 
-        # Configuração
-        config = Config()
-
-        # Logger
-        logger = Logger(config)
-
-        # Memória
-        memory = Memory()
-
-        # Gerenciador da memória
-        memory_manager = MemoryManager(
-            memory
-        )
-
-        # Aprendizado
-        learning = Learning(
-            memory_manager
-        )
-
-        learning_manager = LearningManager(
-            learning
-        )
-
-        # Contexto
-        context = ContextManager()
-
-        # Entrada
-        input_manager = InputManager()
-
-        # Processador
-        processor = CommandProcessor()
-
-        # Cérebro
-        brain = Brain()
-
-        # Registro dos módulos
-        self.manager.register(
-            "config",
-            config
-        )
-
-        self.manager.register(
-            "logger",
-            logger
-        )
-
-        self.manager.register(
-            "memory",
-            memory
-        )
-
-        self.manager.register(
-            "memory_manager",
-            memory_manager
-        )
-
-        self.manager.register(
-            "learning",
-            learning
-        )
-
-        self.manager.register(
-            "learning_manager",
-            learning_manager
-        )
-
-        self.manager.register(
-            "context",
-            context
-        )
-
-        self.manager.register(
-            "input",
-            input_manager
-        )
-
-        self.manager.register(
-            "processor",
-            processor
-        )
-
-        self.manager.register(
-            "brain",
-            brain
-        )
-
+    # =====================================
+    # Inicialização
+    # =====================================
 
     def start(self):
 
         self.running = True
 
-        logger = self.manager.get("logger")
-        memory = self.manager.get("memory")
-        config = self.manager.get("config")
 
-        logger.info("Inicializando módulos...")
+        logger = self.manager.get(
+            "logger"
+        )
 
-        memory.start()
+        config = self.manager.get(
+            "config"
+        )
+
+
+        logger.info(
+            "Inicializando módulos..."
+        )
+
+
+        self.manager.start_all()
+
+
 
         print("=" * 40)
-        print(f"{config.get('name')} v{config.get('version')}")
-        print("Sistema iniciado com sucesso.")
+
+        print(
+            f"{config.get('name')} v{config.get('version')}"
+        )
+
+        print(
+            "Sistema iniciado com sucesso."
+        )
+
         print("=" * 40)
 
-        logger.info("Sistema iniciado.")
 
+        logger.info(
+            "Sistema iniciado."
+        )
+
+
+
+    # =====================================
+    # Loop principal
+    # =====================================
 
     def run(self):
 
-        logger = self.manager.get("logger")
-        input_manager = self.manager.get("input")
-        processor = self.manager.get("processor")
-        brain = self.manager.get("brain")
+        logger = self.manager.get(
+            "logger"
+        )
 
-        logger.info("Aguardando comandos...")
+        input_manager = self.manager.get(
+            "input"
+        )
+
+        processor = self.manager.get(
+            "processor"
+        )
+
+        brain = self.manager.get(
+            "brain"
+        )
+
+
+        logger.info(
+            "Aguardando comandos..."
+        )
+
 
         while self.running:
 
+
             texto = input_manager.get_input()
+
 
             resultado = processor.process(
                 texto
             )
 
+
             if resultado["type"] == "command":
 
-                comando = resultado["content"]
 
-
-                # ==========================
-                # ENCERRAR
-                # ==========================
-
-                if comando == "sair":
-
-                    logger.info(
-                        "Encerrando sistema..."
-                    )
-
-                    self.running = False
-
-
-                # ==========================
-                # MEMÓRIA
-                # ==========================
-
-                elif comando == "memory":
-
-                    memory = self.manager.get(
-                        "memory"
-                    )
-
-                    print("")
-                    print("===== MEMÓRIA =====")
-
-                    dados = memory.get_all()
-
-                    if dados:
-
-                        for chave, valor in dados.items():
-
-                            print(
-                                f"{chave}: {valor}"
-                            )
-
-                    else:
-
-                        print(
-                            "Memória vazia."
-                        )
-
-                    print("===================")
-                    print("")
-
-
-                # ==========================
-                # HISTÓRICO
-                # ==========================
-
-                elif comando == "history":
-
-                    context = self.manager.get(
-                        "context"
-                    )
-
-                    print("")
-                    print("===== HISTÓRICO =====")
-
-                    historico = context.get(
-                        "history"
-                    )
-
-                    if historico:
-
-                        for item in historico:
-
-                            print(item)
-
-                    else:
-
-                        print(
-                            "Histórico vazio."
-                        )
-
-                    print("====================")
-                    print("")
-
-
-                # ==========================
-                # AJUDA
-                # ==========================
-
-                elif comando == "help":
-
-                    print("")
-                    print("===== COMANDOS =====")
-                    print("/help")
-                    print("/memory")
-                    print("/history")
-                    print("/sair")
-                    print("====================")
-                    print("")
-
-
-                # ==========================
-                # DESCONHECIDO
-                # ==========================
-
-                else:
-
-                    logger.warning(
-                        f"Comando desconhecido: {comando}"
-                    )
+                self.process_command(
+                    resultado["content"]
+                )
 
 
             elif resultado["type"] == "message":
 
+
                 resposta = brain.think(
+
                     resultado["content"],
+
                     self.manager
+
                 )
+
 
                 print(resposta)
 
 
-    def stop(self):
 
-        logger = self.manager.get("logger")
-        memory = self.manager.get("memory")
+    # =====================================
+    # Comandos
+    # =====================================
 
-        memory.stop()
+    def process_command(self, comando):
 
-        logger.info(
-            "Sistema encerrado."
+        logger = self.manager.get(
+            "logger"
         )
 
-        self.running = False
 
-        print("=" * 40)
-        print("Sistema encerrado.")
-        print("=" * 40)
+        if comando == "sair":
+
+            logger.info(
+                "Encerrando sistema..."
+            )
+
+
+            self.stop()
+
+            return
+
+
+
+        if comando == "help":
+
+            print("")
+            print("===== COMANDOS =====")
+            print("/help")
+            print("/memory")
+            print("/history")
+            print("/sair")
+            print("====================")
+            print("")
+
+            return
+
+
+
+        if comando == "memory":
+
+            memory = self.manager.get(
+                "memory"
+            )
+
+
+            print("")
+            print("===== MEMÓRIA =====")
+
+
+            dados = memory.get_all()
+
+
+            if dados:
+
+                for chave, valor in dados.items():
+
+                    print(
+                        f"{chave}: {valor}"
+                    )
+
+            else:
+
+                print(
+                    "Memória vazia."
+                )
+
+
+            print("===================")
+            print("")
+
+            return
+
+
+
+        if comando == "history":
+
+            context = self.manager.get(
+                "context"
+            )
+
+
+            print("")
+            print("===== HISTÓRICO =====")
+
+
+            historico = context.get_history()
+
+
+            if historico:
+
+                for item in historico:
+
+                    print(item)
+
+            else:
+
+                print(
+                    "Histórico vazio."
+                )
+
+
+            print("====================")
+            print("")
+
+            return
+
+
+
+        logger.warning(
+            f"Comando desconhecido: {comando}"
+        )
+
+
+
+    # =====================================
+    # Encerramento
+    # =====================================
+
+    def stop(self):
+
+        if not self.running:
+            return
+
+
+    logger = Self.manager.get(
+        "logger"
+    )
+
+
+    logger.info(
+        "Encerrando módulos..."
+    )
+
+
+    Self.manager.stop_all()
+
+
+    Self.running = False
+
+
+    logger.info(
+        "Sistema encerrado."
+    )
+
+
+    print("=" * 40)
+
+    print(
+        "Sistema encerrado."
+    )
+
+    print("=" * 40)

@@ -6,12 +6,42 @@ class MemoryManager:
 
 
     # ==========================
+    # Métodos genéricos
+    # ==========================
+
+    def save(self, key, value):
+
+        self.memory.save(
+            key,
+            value
+        )
+
+
+    def load(self, key, default=None):
+
+        value = self.memory.load(key)
+
+        if value is None:
+
+            return default
+
+        return value
+
+
+    def delete(self, key):
+
+        self.memory.delete(
+            key
+        )
+
+
+    # ==========================
     # USUÁRIO
     # ==========================
 
     def set_user_name(self, name):
 
-        self.memory.save(
+        self.save(
             "user_name",
             name
         )
@@ -19,14 +49,14 @@ class MemoryManager:
 
     def get_user_name(self):
 
-        return self.memory.load(
+        return self.load(
             "user_name"
         )
 
 
     def delete_user_name(self):
 
-        self.memory.delete(
+        self.delete(
             "user_name"
         )
 
@@ -37,17 +67,14 @@ class MemoryManager:
 
     def set_preference(self, key, value):
 
-        preferences = self.memory.load(
-            "preferences"
+        preferences = self.load(
+            "preferences",
+            {}
         )
-
-        if preferences is None:
-
-            preferences = {}
 
         preferences[key] = value
 
-        self.memory.save(
+        self.save(
             "preferences",
             preferences
         )
@@ -55,13 +82,10 @@ class MemoryManager:
 
     def get_preference(self, key):
 
-        preferences = self.memory.load(
-            "preferences"
+        preferences = self.load(
+            "preferences",
+            {}
         )
-
-        if preferences is None:
-
-            return None
 
         return preferences.get(key)
 
@@ -72,19 +96,16 @@ class MemoryManager:
 
     def add_fact(self, fact):
 
-        facts = self.memory.load(
-            "facts"
+        facts = self.load(
+            "facts",
+            []
         )
-
-        if facts is None:
-
-            facts = []
 
         if fact not in facts:
 
             facts.append(fact)
 
-            self.memory.save(
+            self.save(
                 "facts",
                 facts
             )
@@ -92,15 +113,10 @@ class MemoryManager:
 
     def get_facts(self):
 
-        facts = self.memory.load(
-            "facts"
+        return self.load(
+            "facts",
+            []
         )
-
-        if facts is None:
-
-            return []
-
-        return facts
 
 
     # ==========================
@@ -111,18 +127,22 @@ class MemoryManager:
 
         return {
 
-            "user_name": self.get_user_name(),
+            "user_name":
+
+                self.get_user_name(),
 
             "preferences":
 
-                self.memory.load(
-                    "preferences"
-                ) or {},
+                self.load(
+                    "preferences",
+                    {}
+                ),
 
             "facts":
 
-                self.memory.load(
-                    "facts"
-                ) or []
+                self.load(
+                    "facts",
+                    []
+                )
 
         }

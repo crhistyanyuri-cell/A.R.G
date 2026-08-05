@@ -1,14 +1,17 @@
-from Core import Core
+from Bootstrap import Bootstrap
 
 
 def main():
 
-    arg = Core()
+    arg = Bootstrap().build()
 
     arg.start()
+
     arg.run()
+
     arg.stop()
 
 
 if __name__ == "__main__":
+
     main()

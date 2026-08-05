@@ -3,74 +3,137 @@ from Intent.IntentTypes import IntentTypes
 
 class IntentDetector:
 
+    # ==========================
+    # Frases diretas
+    # ==========================
+
+    GREETINGS = {
+        "oi",
+        "olá",
+        "ola",
+        "bom dia",
+        "boa tarde",
+        "boa noite"
+    }
+
+    AI_NAME = {
+        "seu nome",
+        "qual seu nome",
+        "qual o seu nome",
+        "como você se chama",
+        "como voce se chama",
+        "quem é você",
+        "quem e voce"
+    }
+
+    AI_VERSION = {
+        "sua versão",
+        "sua versao",
+        "qual sua versão",
+        "qual sua versao"
+    }
+
+    AI_LANGUAGE = {
+        "seu idioma",
+        "qual seu idioma"
+    }
+
+    USER_NAME = {
+        "meu nome",
+        "qual meu nome",
+        "qual o meu nome"
+    }
+
+    # ==========================
+    # Padrões
+    # ==========================
+
+    PATTERNS = {
+
+        "meu nome é": IntentTypes.REMEMBER_USER_NAME,
+
+        # Futuramente:
+        # "minha idade é": IntentTypes.REMEMBER_USER_AGE,
+        # "eu moro em": IntentTypes.REMEMBER_USER_CITY,
+    }
+
+
     def detect(self, message, context):
 
+        # ==========================
         # Cumprimentos
-        if message in [
-            "oi",
-            "olá",
-            "ola",
-            "bom dia",
-            "boa tarde",
-            "boa noite"
-        ]:
+        # ==========================
+
+        if message in self.GREETINGS:
+
             return IntentTypes.GREETING
 
 
-        # Nome da A.R.G.
-        if message in [
-            "seu nome",
-            "qual seu nome",
-            "qual o seu nome",
-            "como você se chama",
-            "como voce se chama",
-            "quem é você",
-            "quem e voce"
-        ]:
+        # ==========================
+        # Nome da IA
+        # ==========================
+
+        if message in self.AI_NAME:
+
             return IntentTypes.ASK_AI_NAME
 
 
+        # ==========================
         # Versão
-        if message in [
-            "sua versão",
-            "sua versao",
-            "qual sua versão",
-            "qual sua versao"
-        ]:
+        # ==========================
+
+        if message in self.AI_VERSION:
+
             return IntentTypes.ASK_AI_VERSION
 
 
+        # ==========================
         # Idioma
-        if message in [
-            "seu idioma",
-            "qual seu idioma"
-        ]:
+        # ==========================
+
+        if message in self.AI_LANGUAGE:
+
             return IntentTypes.ASK_AI_LANGUAGE
 
 
-        # Aprender nome do usuário
-        if message.startswith("meu nome é"):
-            return IntentTypes.REMEMBER_USER_NAME
+        # ==========================
+        # Nome do usuário
+        # ==========================
 
+        if message in self.USER_NAME:
 
-        # Perguntar nome do usuário
-        if message in [
-            "meu nome",
-            "qual meu nome",
-            "qual o meu nome"
-        ]:
             return IntentTypes.ASK_USER_NAME
 
 
-        # Frases que dependem do contexto
-        if message in [
+        # ==========================
+        # Detecta padrões
+        # ==========================
+
+        for pattern, intent in self.PATTERNS.items():
+
+            if message.startswith(pattern):
+
+                return intent
+
+
+        # ==========================
+        # Contexto
+        # ==========================
+
+        if message in {
+
             "e o meu",
             "e o meu nome"
-        ]:
+
+        }:
 
             if context.get("last_topic") == "identity":
 
                 return IntentTypes.ASK_USER_NAME
 
+
+        # ==========================
+        # Desconhecido
+        # ==========================
 
         return IntentTypes.UNKNOWN

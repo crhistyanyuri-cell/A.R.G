@@ -19,66 +19,33 @@ class MemoryHandler(BaseHandler):
         )
 
 
+        # ==========================
         # Aprender nome do usuário
+        # ==========================
+
         if intent == IntentTypes.REMEMBER_USER_NAME:
 
-            nome = self.extract_name(
-                original_message
+            return self._remember_user_name(
+                original_message,
+                memory_manager
             )
 
 
-            if not nome:
-
-                return (
-                    "Não consegui identificar "
-                    "seu nome."
-                )
-
-
-            nome_antigo = (
-                memory_manager.get_user_name()
-            )
-
-
-            memory_manager.set_user_name(
-                nome
-            )
-
-
-            if (
-                nome_antigo
-                and
-                nome_antigo != nome
-            ):
-
-                return (
-                    f"Atualizei seu nome. "
-                    f"Agora vou lembrar que "
-                    f"você é {nome}."
-                )
-
-
-            return (
-                f"Entendido. "
-                f"Vou lembrar que "
-                f"seu nome é {nome}."
-            )
-
-
+        # ==========================
         # Informar nome
+        # ==========================
+
         if intent == IntentTypes.ASK_USER_NAME:
 
             nome = (
                 memory_manager.get_user_name()
             )
 
-
             if nome:
 
                 return (
                     f"Seu nome é {nome}."
                 )
-
 
             return (
                 "Ainda não sei seu nome."
@@ -88,9 +55,73 @@ class MemoryHandler(BaseHandler):
         return None
 
 
+    # ==========================
+    # Métodos privados
+    # ==========================
+
+    def _remember_user_name(
+        self,
+        message,
+        memory_manager
+    ):
+
+        nome = self.extract_name(
+            message
+        )
+
+        if not nome:
+
+            return (
+                "Não consegui identificar "
+                "seu nome."
+            )
+
+
+        nome_antigo = (
+            memory_manager.get_user_name()
+        )
+
+
+        memory_manager.set_user_name(
+            nome
+        )
+
+
+        if (
+
+            nome_antigo
+
+            and
+
+            nome_antigo != nome
+
+        ):
+
+            return (
+
+                f"Atualizei seu nome. "
+
+                f"Agora vou lembrar que "
+
+                f"você é {nome}."
+
+            )
+
+
+        return (
+
+            f"Entendido. "
+
+            f"Vou lembrar que "
+
+            f"seu nome é {nome}."
+
+        )
+
+
     def extract_name(self, message):
 
-        prefixes = [
+        prefixes = {
 
             "meu nome é",
 
@@ -98,7 +129,7 @@ class MemoryHandler(BaseHandler):
 
             "me chamo"
 
-        ]
+        }
 
 
         texto = message.lower()
@@ -109,9 +140,11 @@ class MemoryHandler(BaseHandler):
             if texto.startswith(prefix):
 
                 return (
+
                     message[
                         len(prefix):
                     ].strip()
+
                 )
 
 
